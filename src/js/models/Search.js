@@ -6,8 +6,8 @@ export default class {
   }
   async getResults(query) {
     try {
-      const result = await axios(`https://forkify-api.herokuapp.com/api/search?&q=${this.query}`);
-      this.recipe = result.data.recipes;
+      const res = await axios(`https://forkify-api.herokuapp.com/api/search?&q=${this.query}`);
+      this.result = res.data.recipes;
 
       //console.log(this.recipe);
     } catch (error) {
