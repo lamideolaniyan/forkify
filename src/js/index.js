@@ -1,6 +1,7 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
+import * as recipeView from './views/recipeView';
 import { elements, renderLoader, clearLoader, clearButtons } from './views/base';
 
 /* Global app state
@@ -72,9 +73,11 @@ const ctrlRecipe = async () => {
 
     //Create recipe object
     state.recipe = new Recipe(id);
+
     try {
       //Get recipe data
       await state.recipe.getRecipe();
+      state.recipe.parseIngredients();
 
       //Calc time and servings
       state.recipe.calcTime();
