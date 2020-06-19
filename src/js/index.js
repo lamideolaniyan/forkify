@@ -1,9 +1,11 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import List from './models/List';
+import Likes from './models/Likes';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as listView from './views/listView';
+import * as likesView from './views/likesView';
 import { elements, renderLoader, clearLoader, clearButtons } from './views/base';
 
 /* Global app state
@@ -94,7 +96,7 @@ const ctrlRecipe = async () => {
 
       //Render recipe
       clearLoader();
-      recipeView.renderRecipe(state.recipe);
+      recipeView.renderRecipe(state.recipe, state.likes.isLiked(id));
     } catch (error) {
       alert('Error processing recipe!');
     }
@@ -136,6 +138,45 @@ elements.shopping.addEventListener('click', (e) => {
   }
 });
 
+/**
+ * LIKES CONTROLLER
+ */
+
+//TESTING
+state.likes = new Likes();
+likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+const ctrlLike = () => {
+  if (!state.likes) state.likes = new Likes();
+
+  const curID = state.recipe.id;
+
+  // User has NOT liked current recipe
+  if (!state.likes.isLiked(curID)) {
+    // Add liked to the state
+    const newLike = state.likes.addLike(curID, state.recipe.title, state.recipe.publisher, state.recipe.img);
+
+    // Toggle like button
+    likesView.toggleLikeBtn(true);
+
+    // Add liked to UI
+    likesView.renderLike(newLike);
+
+    // User has liked current recipe
+  } else {
+    // Remove liked to the state
+    state.likes.deleteLike(curID);
+
+    // Toggle like button
+    likesView.toggleLikeBtn(false);
+
+    // Remove liked to UI
+    likesView.deleteLike(curID);
+  }
+
+  likesView.toggleLikeMenu(state.likes.getNumLikes());
+};
+
 // Recipe button events
 elements.recipe.addEventListener('click', (e) => {
   if (e.target.matches('.btn-dec, .btn-dec *')) {
@@ -151,10 +192,10 @@ elements.recipe.addEventListener('click', (e) => {
   } else if (e.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
     // Add ingredients to shopping list
     ctrlList();
+  } else if (e.target.matches('.recipe__love, .recipe__love *')) {
+    // Like controller
+    ctrlLike();
   }
 
   //console.log(state.recipe);
 });
-
-// TESTING
-window.l = new List();
