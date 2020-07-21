@@ -17,11 +17,9 @@ import { elements, renderLoader, clearLoader, clearButtons } from './views/base'
 
 const state = {};
 
-window.state = state;
 /**
  * SEARCH CONTROLLER
  */
-
 const ctrlSearch = async () => {
   //1. Read search query from UI
   const query = searchView.getInput();
@@ -70,7 +68,6 @@ elements.searchResPages.addEventListener('click', (e) => {
 /**
  * RECIPE CONTROLLER
  */
-
 const ctrlRecipe = async () => {
   const id = window.location.hash.replace('#', '');
 
@@ -108,7 +105,6 @@ const ctrlRecipe = async () => {
 /**
  * LIST CONTROLLER
  */
-
 const ctrlList = () => {
   // Create a new list IF none exists
   if (!state.list) state.list = new List();
@@ -141,11 +137,6 @@ elements.shopping.addEventListener('click', (e) => {
 /**
  * LIKES CONTROLLER
  */
-
-//TESTING
-state.likes = new Likes();
-likesView.toggleLikeMenu(state.likes.getNumLikes());
-
 const ctrlLike = () => {
   if (!state.likes) state.likes = new Likes();
 
@@ -177,6 +168,20 @@ const ctrlLike = () => {
   likesView.toggleLikeMenu(state.likes.getNumLikes());
 };
 
+// Restore liked recipes on page load
+window.addEventListener('load', () => {
+  state.likes = new Likes();
+
+  //Restore likes
+  state.likes.readStorage;
+
+  // Toggle likes button
+  likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+  //Render likes
+  state.likes.likes.forEach((like) => likesView.renderLike(like));
+});
+
 // Recipe button events
 elements.recipe.addEventListener('click', (e) => {
   if (e.target.matches('.btn-dec, .btn-dec *')) {
@@ -196,6 +201,4 @@ elements.recipe.addEventListener('click', (e) => {
     // Like controller
     ctrlLike();
   }
-
-  //console.log(state.recipe);
 });
